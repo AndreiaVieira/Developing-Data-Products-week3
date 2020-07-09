@@ -1,0 +1,69 @@
+---
+title: "<font size=20>Developing Data Products Week3 <br/> Presentation & Plotly </font>"
+author: "Andreia Vieira"
+date: "08/07/2020"
+output: ioslides_presentation
+fontsize: 4pt
+encoding: "UTF-8"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+```
+## SUMMARY 
+
+###### This activity create a web page using R Markdown and  features a map created with Leaflet. The dataset show the MONITORING PANEL COVID-19 in neighborhoods of Manaus/AM,  in start july Brazil, cases  / 100.000 hab. The dataset  of population of the censo 2010 
+
+##  DATA 
+
+###### COVID-19 Manaus/AM - incidence: cases by 100. 000 hab. in 02 July  2020
+<font size ="2"> Fundação de vigilância sanitária – FVS/AM 
+Download http://www.fvs.am.gov.br/indicadorSalaSituacao_view/60/2 </font>
+
+
+###### Population and households - Censo 2010 Manaus/AM
+<font size ="2"> IBGE
+Download ftp://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_do_Universo/Agregados_por_Setores_Censitarios/AM_20171016.zip </font>
+
+
+```{r, warning=FALSE, message=FALSE}
+
+library(plotly)
+library(leaflet)
+library(dplyr)
+library(htmltools)
+library(plotly)
+library(knitr)
+
+
+
+# Leitura dos dados
+covid<-setwd("C:/Mana/ACursoCienciadeDados/Aulas/Desenvolvendo Dados/Projetos")
+covid<-read.csv("./COVID19_MANAUS.csv", header=TRUE, sep=";", dec=".")
+
+covid <- covid %>%
+dplyr::mutate(grupo = cut(TAXA_COVID, breaks = c(0, 500, 1000, 2000, Inf), labels = c("Abaixo de 500", "Entre 500 e 1000", "Entre 1000 e 2000", "Acima de 2000"))) 
+
+```
+## DATASET 
+##### COVID19 - MANAUS/AM
+```{r, warning=FALSE}
+  
+   str(covid)
+
+```
+## MAP
+```{r, warning=FALSE, echo=FALSE, message=FALSE}
+
+p<-plot_ly(data = covid, x = ~NM_BAIRRO, y = ~POPULACAO, type = "scatter", mode = "markers", color=(~grupo))
+
+layout(p,title="COVID19 - MANAUS/AM - 02 /07/2020", xaxis=(list(title="Neighborhoods")), yaxis=(list(title="Population - censo 2010 (*1000)"))) 
+
+```
+
+## CONSIDERATIONS 
+
+- There is no standard with respect to COVID19 indication rate.
+
+
